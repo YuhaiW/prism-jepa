@@ -12,12 +12,28 @@ PRISM trains a small MLP head on the frozen encoder of a JEPA world model
 N(0, σ_π²) by a closed-form Product of Gaussians, and MPPI samples from the fused distribution while
 the world model scores candidates by embedding distance to the goal.
 
+This repository contains training and evaluation for the four simulated tasks of the paper:
+PushT, Cube (OGBench `cube-single`), TwoRoom and Reacher.
+
+## Reproducing with an AI agent
+
+`AGENTS.md` gives coding agents (Claude Code, Codex, Cursor, …) step-by-step instructions with the
+expected numbers for every check. Paste this prompt into your agent, changing the task if needed:
+
+```text
+Reproduce the PRISM results (arXiv 2606.07974) for the TwoRoom task on this machine.
+1. Clone https://github.com/YuhaiW/prism-jepa and follow AGENTS.md in the repo root.
+2. Before downloading datasets (3-46 GB each) or installing system packages, tell me what and how large, and wait for my OK.
+3. Run the quick check first and report a table: task, planner, K, seed, your success rate, expected success rate.
+4. Do not change configs, seeds or hyperparameters. If a step fails, report the error and the log path instead of modifying the method code.
+```
+
+For the full paper Fig. 5, replace the first line with "Reproduce Fig. 5 of the PRISM paper
+(arXiv 2606.07974) for all four tasks on this machine." and expect about 6 GPU-hours.
+
 <p align="center">
   <img src="https://yuhaiw.github.io/PRISM_web/static/images/fig_architecture.png" width="90%" alt="PRISM architecture">
 </p>
-
-This repository contains training and evaluation for the four simulated tasks of the paper:
-PushT, Cube (OGBench `cube-single`), TwoRoom and Reacher.
 
 ## Results
 
@@ -119,22 +135,6 @@ python eval_prism_head.py --config-name=cube policy=cube/lewm solver=mppi solver
     +head.ckpt=checkpoints/prior_head_cube.pt +head.injection_mode=pog +head.sigma_scale=1.0
 python eval.py --config-name=cube policy=cube/lewm solver=mppi solver.num_samples=128 seed=0
 ```
-
-## Reproducing with an AI agent
-
-`AGENTS.md` gives coding agents (Claude Code, Codex, Cursor, …) step-by-step instructions with the
-expected numbers for every check. Paste this prompt into your agent, changing the task if needed:
-
-```text
-Reproduce the PRISM results (arXiv 2606.07974) for the TwoRoom task on this machine.
-1. Clone https://github.com/YuhaiW/prism-jepa and follow AGENTS.md in the repo root.
-2. Before downloading datasets (3-46 GB each) or installing system packages, tell me what and how large, and wait for my OK.
-3. Run the quick check first and report a table: task, planner, K, seed, your success rate, expected success rate.
-4. Do not change configs, seeds or hyperparameters. If a step fails, report the error and the log path instead of modifying the method code.
-```
-
-For the full paper Fig. 5, replace the first line with "Reproduce Fig. 5 of the PRISM paper
-(arXiv 2606.07974) for all four tasks on this machine." and expect about 6 GPU-hours.
 
 ## Repository layout
 
