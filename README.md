@@ -95,12 +95,12 @@ For each task this downloads
 build them from [`quentinll/lewm-<task>`](https://huggingface.co/quentinll) instead, download that model
 repo to `$STABLEWM_HOME/hf_<task>/` and run `python convert_hf_checkpoint.py <task>`.
 
-| Task | Dataset (`$STABLEWM_HOME/…`) | World model (`$STABLEWM_HOME/…`) |
-|---|---|---|
-| PushT | `pusht_expert_train.h5` | `pusht/lewm_object.ckpt` |
-| Cube | `ogbench/cube_single_expert.h5` | `cube/lewm_object.ckpt` |
-| TwoRoom | `tworoom.h5` | `tworooms/lewm_object.ckpt` |
-| Reacher | `dmc/reacher_random.h5` | `reacher/lewm_object.ckpt` |
+| Task | Weights (Hugging Face) | Dataset (`$STABLEWM_HOME/…`) | World model (`$STABLEWM_HOME/…`) |
+|---|---|---|---|
+| PushT | [`YuhaiW/prism-jepa-pusht`](https://huggingface.co/YuhaiW/prism-jepa-pusht) | `pusht_expert_train.h5` | `pusht/lewm_object.ckpt` |
+| Cube | [`YuhaiW/prism-jepa-cube`](https://huggingface.co/YuhaiW/prism-jepa-cube) | `ogbench/cube_single_expert.h5` | `cube/lewm_object.ckpt` |
+| TwoRoom | [`YuhaiW/prism-jepa-tworoom`](https://huggingface.co/YuhaiW/prism-jepa-tworoom) | `tworoom.h5` | `tworooms/lewm_object.ckpt` |
+| Reacher | [`YuhaiW/prism-jepa-reacher`](https://huggingface.co/YuhaiW/prism-jepa-reacher) | `dmc/reacher_random.h5` | `reacher/lewm_object.ckpt` |
 
 ## Training
 
