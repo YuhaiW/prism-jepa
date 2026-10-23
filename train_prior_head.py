@@ -52,7 +52,8 @@ STABLE_HOME = Path(os.environ.get("STABLEWM_HOME", Path.home() / ".stable-wm"))
 
 # Per-task dataset (relative to STABLEWM_HOME) and 90/10 episode-level train/val split.
 TASKS = {
-    "pusht":   dict(h5="pusht_expert_train.h5",         train_ep_range=(0, 16817), val_ep_range=(16817, 18685)),
+    # PushT: 15 epochs, the schedule of the released head (its best checkpoint is epoch 1 under 15 or 50 epochs).
+    "pusht":   dict(h5="pusht_expert_train.h5",         train_ep_range=(0, 16817), val_ep_range=(16817, 18685), epochs=15),
     "cube":    dict(h5="ogbench/cube_single_expert.h5", train_ep_range=(0, 9000),  val_ep_range=(9000, 10000)),
     "tworoom": dict(h5="tworoom.h5",                    train_ep_range=(0, 9000),  val_ep_range=(9000, 10000)),
     "reacher": dict(h5="dmc/reacher_random.h5",         train_ep_range=(0, 9000),  val_ep_range=(9000, 10000)),
@@ -91,7 +92,7 @@ def cosine_warmup_factor(step: int, total_steps: int, warmup: int) -> float:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--task", choices=list(TASKS), required=True)
-    ap.add_argument("--epochs", type=int, default=EPOCHS)
+    ap.add_argument("--epochs", type=int, default=None, help=f"default: {EPOCHS} (PushT: 15)")
     ap.add_argument("--batch", type=int, default=BATCH)
     ap.add_argument("--lr", type=float, default=LR)
     ap.add_argument("--wd", type=float, default=WD)
@@ -101,6 +102,8 @@ def main():
     args = ap.parse_args()
 
     task_cfg = TASKS[args.task]
+    if args.epochs is None:
+        args.epochs = task_cfg.get("epochs", EPOCHS)
     h5_path = STABLE_HOME / task_cfg["h5"]
     cache_dir = STABLE_HOME / "jepa_cache" / args.task
     out_path = Path(args.out) if args.out else REPO / "checkpoints" / f"prior_head_{args.task}.pt"

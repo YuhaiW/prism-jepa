@@ -21,15 +21,16 @@ PushT, Cube (OGBench `cube-single`), TwoRoom and Reacher.
 expected numbers for every check. Paste this prompt into your agent, changing the task if needed:
 
 ```text
-Reproduce the PRISM results (arXiv 2606.07974) for the TwoRoom task on this machine.
+Reproduce the PRISM results (arXiv 2606.07974) for the PushT task on this machine.
 1. Clone https://github.com/YuhaiW/prism-jepa and follow AGENTS.md in the repo root.
 2. Before downloading datasets (3-46 GB each) or installing system packages, tell me what and how large, and wait for my OK.
 3. Run the quick check first and report a table: task, planner, K, seed, your success rate, expected success rate.
 4. Do not change configs, seeds or hyperparameters. If a step fails, report the error and the log path instead of modifying the method code.
 ```
 
-For the full paper Fig. 5, replace the first line with "Reproduce Fig. 5 of the PRISM paper
-(arXiv 2606.07974) for all four tasks on this machine." and expect about 6 GPU-hours.
+Other tasks: Cube, TwoRoom (the cheapest check: 3.4 GB download) or Reacher. For the full paper Fig. 5, replace the
+first line with "Reproduce Fig. 5 of the PRISM paper (arXiv 2606.07974) for all four tasks on this machine." and
+expect about 6 GPU-hours.
 
 <p align="center">
   <img src="https://yuhaiw.github.io/PRISM_web/static/images/fig_architecture.png" width="90%" alt="PRISM architecture">
@@ -112,8 +113,8 @@ bash scripts/train.sh cube --world-model      # also train the LeWM world model 
    epoch to `$STABLEWM_HOME/<task>/lewm_object.ckpt`.
 2. `jepa_cache.py` encodes every frame of the dataset with the frozen encoder
    (`$STABLEWM_HOME/jepa_cache/<task>/`, 4-11 minutes per task).
-3. `train_prior_head.py` trains the head with β-NLL (β = 0.5) for 50 epochs on a 90/10 episode split
-   and writes `checkpoints/prior_head_<task>.pt` (2-5 minutes per task).
+3. `train_prior_head.py` trains the head with β-NLL (β = 0.5) on a 90/10 episode split for 50 epochs
+   (PushT: 15, the schedule of the released head) and writes `checkpoints/prior_head_<task>.pt` (2-5 minutes per task).
 
 Extra arguments after the task are passed to `train_prior_head.py` (`--epochs`, `--lr`, `--seed`, …).
 

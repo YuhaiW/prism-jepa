@@ -62,7 +62,7 @@ zstd --version && hf version             # needed by scripts/download.sh
 ## 3. Data and weights
 
 ```bash
-bash scripts/download.sh tworoom          # pusht | cube | tworoom | reacher | all
+bash scripts/download.sh pusht            # pusht | cube | tworoom | reacher | all
 ```
 
 Afterwards these files must exist:
@@ -79,7 +79,7 @@ The Reacher archive contains `reacher.h5`; `download.sh` renames it to `dmc/reac
 ## 4. Quick check (about 2-5 minutes per task after the download)
 
 ```bash
-bash scripts/test.sh tworoom --K 32 --seeds 0
+bash scripts/test.sh pusht --K 32 --seeds 0
 ```
 
 This runs vanilla, warm-start and PRISM MPPI once each (50 episodes per run). Expected success rates
@@ -106,7 +106,7 @@ end averages every row in that file, so delete `results/<task>.tsv` before a fre
 ## 5. Seed 0 at all budgets (optional, about 10 minutes per task)
 
 ```bash
-bash scripts/test.sh tworoom --seeds 0
+bash scripts/test.sh pusht --seeds 0
 ```
 
 | Task | vanilla K=32/64/128 | warm_start K=32/64/128 | prism K=32/64/128 |
@@ -137,8 +137,8 @@ land within about 2 pp.
 ## 7. Training the prior head
 
 ```bash
-cp checkpoints/prior_head_tworoom.pt checkpoints/prior_head_tworoom.released.pt   # train.sh overwrites the downloaded head
-bash scripts/train.sh tworoom
+cp checkpoints/prior_head_pusht.pt checkpoints/prior_head_pusht.released.pt   # train.sh overwrites the downloaded head
+bash scripts/train.sh pusht
 ```
 
 This caches frozen encoder features (`$STABLEWM_HOME/jepa_cache/<task>/`; TwoRoom 4 min, the other
@@ -146,20 +146,20 @@ tasks 9-11 min) and trains the head (2-5 min). The last lines of the output repo
 
 | Task | best val NLL | best val MSE | best epoch |
 |---|---|---|---|
-| PushT | 0.5178 | 0.7331 | 1 |
+| PushT | 0.5179 | 0.7331 | 1 |
 | Cube | 0.1920 | 0.6077 | 7 |
 | TwoRoom | 0.4442 | 0.9281 | 1 |
 | Reacher | 0.4950 | 0.9938 | 1 |
 
-With the same package versions on an RTX 5090, Cube, TwoRoom and Reacher retrain to weights identical to
-the released ones (compare the `state_dict` tensors; the files' hashes differ because checkpoints store
+PushT trains for 15 epochs (the released head's schedule), the other tasks for 50. With the same package
+versions on an RTX 5090, all four tasks retrain to weights identical to the released ones (compare the `state_dict` tensors; the files' hashes differ because checkpoints store
 per-epoch timings, and the released files carry a few extra `args` keys from an earlier version of the
 training script; evaluation reads only `config` and `state_dict`). On other hardware expect differences
 in the third or fourth decimal. To compare a retrained head with the released one:
 
 ```bash
 python -c "import torch,sys; a,b=(torch.load(f,map_location='cpu',weights_only=False)['state_dict'] for f in sys.argv[1:]); print(max((a[k]-b[k]).abs().max().item() for k in a))" \
-    checkpoints/prior_head_tworoom.released.pt checkpoints/prior_head_tworoom.pt     # 0.0 = identical
+    checkpoints/prior_head_pusht.released.pt checkpoints/prior_head_pusht.pt     # 0.0 = identical
 ``` A best epoch
 of 1 is expected for PushT, TwoRoom and Reacher: validation NLL rises after the first epoch and the
 lowest-NLL checkpoint is kept. TwoRoom and Reacher print a note that val MSE fell by less than 15%;
@@ -169,7 +169,7 @@ evaluates the new head against the §4 table.
 ## 8. World-model training (optional, many GPU-hours; ask first)
 
 ```bash
-bash scripts/train.sh tworoom --world-model
+bash scripts/train.sh pusht --world-model
 ```
 
 This trains LeWM from scratch for 100 epochs and replaces `$STABLEWM_HOME/<wm dir>/lewm_object.ckpt`
