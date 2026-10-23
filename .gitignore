@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+outputs/
+multirun/
+wandb/
+logs/
+results/
+checkpoints/*
+!checkpoints/.gitkeep
+*.ckpt
+.DS_Store
+lightning_logs/
+environment.json
+requirements_frozen.txt
